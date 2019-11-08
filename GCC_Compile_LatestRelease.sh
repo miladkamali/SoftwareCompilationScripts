@@ -17,8 +17,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# TODO: Do every thing as unprivilaged user and then for installation switch to super user
-
+# TODO: do every thing as normal user then for installation switch to super user
+# TODO: check if each step is completed properly before continuing with the next step
 InstallationLocation="/usr/local"
 version="9.2.0"
 sourceStoreLocation="~/software_used"
