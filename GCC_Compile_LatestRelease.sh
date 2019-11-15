@@ -23,11 +23,11 @@ then
     read response
     if [ $response == "yes" ]
     then
+	step "downloading gcc-$version"
         if [ ! -d $sourceStoreLocation ]
         then
-            mkdir $sourceStoreLocation
+            try mkdir "$sourceStoreLocation"
         fi
-	step "downloading gcc-$version"
 	{
             cd $sourceStoreLocation
             try wget "ftp://ftp.gnu.org/gnu/gcc/gcc-$version/gcc-$version.tar.xz"
