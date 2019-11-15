@@ -4,7 +4,7 @@ step "installing dependencies"
 {
     InstallationLocation="/usr/local"
     version="9.2.0"
-    sourceStoreLocation="~/software_used"
+    sourceStoreLocation="/root/software_used"
     try apt install -y build-essential lynx wget checkinstall
 } >/dev/null 2>&1
 next
@@ -21,6 +21,7 @@ then
     echo "Latest GCC installed is gcc-$latestInstalledVersion but latest available gcc is gcc-$latestAvailableVersion"
     echo "say yes to compile and install the latest version"
     read response
+    version=$latestAvailableVersion
     if [ $response == "yes" ]
     then
 	step "downloading gcc-$version"
