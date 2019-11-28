@@ -4,7 +4,7 @@ IFS=$(echo -en "\n\b")
 
 function clean_file_names {
     IFS=$(echo -en "\n\b")
-    for file in `ls`
+    for file in `cat $1`
     do
 	if [ -f $file ]
 	then
@@ -23,34 +23,28 @@ function clean_file_names {
 
 }
 
+function findVideoFilesInDirectoryRecursively{
+    find $1 -type f -name *mp4 -o -name *flv -o -name *avi -o -name *webm -o -name *mov
+}
 
-if [ $op_type=="" ]
-then
-    rm convert_list
-    clean_file_names
-    ls|grep \.mp4 >> convert_list
-    ls|grep \.flv >> convert_list
-    ls|grep \.m4v >> convert_list
-    ls|grep \.avi >>convert_list
-    ls|grep \.wma >>convert_list
-    ls|grep \.wmv >>convert_list
-    ls|grep \.webm >>convert_list
-    ls|grep \.mov >>convert_list
-    for i in `cat convert_list`
-    do
-	name=`echo $i|cut -d '.' -f1`
-	name="$name-crf28.mkv"
-	echo $name-x265-crf26.mkv
-#input_duration=`ffprobe $i -show_format|grep duration|cut -d '=' -f2`
-	input_duration=`mediainfo --Inform="General;%Duration%" $i`
-	ffmpeg -i $i -vcodec libx265 -crf 28 -preset fast  -c:a aac -strict experimental -b:a 192k $name
-#output_duration=`ffprobe $name -show_format|grep duration|cut -d '=' -f2`
-	output_duration=`mediainfo --Inform="General;%Duration%" $name`
-	echo "$input_duration == $output_duration"
-#if [ $input_duration == $output_duration ]
-#then
-#	rm $i
-#fi
-    done
-    rm convert_list
-fi
+rm convert_list
+findVideoFilesInDirectoryRecursively ./ >>convert_list
+clean_file_names ./convert_list
+for i in `cat convert_list`
+do
+    name=`echo $i|cut -d '.' -f1`
+    name="$name-crf28.mkv"
+    echo $name-x265-crf26.mkv
+    #input_duration=`ffprobe $i -show_format|grep duration|cut -d '=' -f2`
+    input_duration=`mediainfo --Inform="General;%Duration%" $i`
+    ffmpeg -i $i -vcodec libx265 -crf 28 -preset slow  -c:a aac -strict experimental -b:a 192k $name
+    #output_duration=`ffprobe $name -show_format|grep duration|cut -d '=' -f2`
+    output_duration=`mediainfo --Inform="General;%Duration%" $name`
+    echo "$input_duration == $output_duration"
+    #if [ $input_duration == $output_duration ]
+    #then
+    #	rm $i
+    #fi
+done
+rm convert_list
+
