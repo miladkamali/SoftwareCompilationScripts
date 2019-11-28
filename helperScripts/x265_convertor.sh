@@ -23,8 +23,8 @@ function clean_file_names {
 
 }
 
-function findVideoFilesInDirectoryRecursively{
-    find $1 -type f -name *mp4 -o -name *flv -o -name *avi -o -name *webm -o -name *mov
+function findVideoFilesInDirectoryRecursively {
+    find $1 -type f -name *mp4 -o -name *flv -o -name *avi -o -name *webm -o -name *mov;
 }
 
 rm convert_list
