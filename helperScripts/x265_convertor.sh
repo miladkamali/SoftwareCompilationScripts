@@ -23,28 +23,44 @@ function clean_file_names {
 
 }
 
+function clean_file_names_recursively {
+    clean_dile_names ./
+    for directory in `ls -l |grep "^d"|cut -d' ' -f9-`
+    do
+	cd $directory
+	clean_dile_names ./
+	clean_file_names_recursively
+    done
+}
+
+
 function findVideoFilesInDirectoryRecursively {
     find $1 -type f -name *mp4 -o -name *flv -o -name *avi -o -name *webm -o -name *mov;
 }
 
 rm convert_list
 findVideoFilesInDirectoryRecursively ./ >>convert_list
-clean_file_names ./convert_list
+clean_file_names ./convert_list>>convert_list2
+rm convert_list
+mv convert_list2 convert_list
+
 for i in `cat convert_list`
 do
-    name=`echo $i|cut -d '.' -f1`
+    name=`echo $i|cut -d '.' -f2`
     name="$name-crf28.mkv"
     echo $name-x265-crf26.mkv
     #input_duration=`ffprobe $i -show_format|grep duration|cut -d '=' -f2`
-    input_duration=`mediainfo --Inform="General;%Duration%" $i`
-    ffmpeg -i $i -vcodec libx265 -crf 28 -preset slow  -c:a aac -strict experimental -b:a 192k $name
+    #input_duration=`mediainfo --Inform="General;%Duration%" $i`
+        echo $i
+    ffmpeg -i $i -vcodec libx265 -crf 30 -preset slow  -c:a aac -strict experimental -b:a 192k .$name
     #output_duration=`ffprobe $name -show_format|grep duration|cut -d '=' -f2`
-    output_duration=`mediainfo --Inform="General;%Duration%" $name`
-    echo "$input_duration == $output_duration"
+    #output_duration=`mediainfo --Inform="General;%Duration%" $name`
+    #echo "$input_duration == $output_duration"
     #if [ $input_duration == $output_duration ]
     #then
-    #	rm $i
+    #   rm $i
     #fi
 done
 rm convert_list
+
 
